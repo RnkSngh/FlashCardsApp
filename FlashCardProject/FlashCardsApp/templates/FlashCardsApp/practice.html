@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+ <head>
+  <style>
+    #Back {display: none;}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% load static%}
+ </head>
+ <body>
+    <!-- <script src="{% static 'js/API_wrappers.js' %}">  </script> -->
+  <div id="Front">
+      <div id="rectangle" style="width:500px; height: 50px; background-color:beige">
+      <h1 id = "WordFront"></h1>
+    </div>
+    <div >
+        <button onclick="switchVisible();"> Turn Over</button>
+    </div>
+</div>
+<div id="Back">
+    <div id="rectangle" style="width:500px; height: 300px; background-color:beige">
+    <h1 id = "WordBack"> </h1>
+    <h2 id = "Definition">  </h2>
+    </div>
+    <h3> Did you get it right?</h3>
+
+    <button onclick="markCorrect(true);"> Yes!</button>
+    <button onclick="markCorrect(false);"> No</button>
+</div>
+
+  <script> 
+  var csrftoken = getCookie('csrftoken');
+
+  $.ajaxSetup({
+  beforeSend: function(xhr, settings) {
+          // Send the token to same-origin, relative URLs only.
+          // Send the token only if the method warrants CSRF protection
+          // Using the CSRFToken value acquired earlier
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
+  });
+
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function switchVisible() {
+    if (document.getElementById('Front')) {
+
+        if (document.getElementById('Front').style.display == 'none') {
+            document.getElementById('Front').style.display = 'block';
+            document.getElementById('Back').style.display = 'none';
+        }
+        else {
+            document.getElementById('Front').style.display = 'none';
+            document.getElementById('Back').style.display = 'block';
+        }
+    }
+}
+
+function getWord(){
+var tmp = null;
+$.ajax({
+    type:"GET",
+    url:"/app/api/getWord",
+    dataType:"json",
+    cache:false,
+    success: function(data){
+        newWord = data.word
+        newDef = data.definition
+        if (newWord==undefined){
+            document.getElementById("Front").innerHTML=data;
+        }
+        else{
+            document.getElementById("WordFront").innerHTML=newWord;
+            document.getElementById("WordBack").innerHTML=newWord;
+            document.getElementById("Definition").innerHTML=newDef;
+        }
+    },
+    error:function(){
+        alert("Error Occured")
+    }
+});
+
+}
+
+function markCorrect(correct){
+word = document.getElementById("WordBack").innerHTML;
+$.ajax({
+    type:"POST",
+    cache:false,
+    url:"/app/api/markCorrect",
+    dataType:"json",
+    contentType: 'application/json',
+    data:JSON.stringify({
+        "word": word,
+        "correct": correct 
+    }),
+    success: function(data){
+        getWord();
+        switchVisible();
+    },
+    error:function(){
+        alert("Error Occured")
+    }
+})
+
+}
+
+  getWord(); //load new word on loading the page </script>
+ </body>
+</html>

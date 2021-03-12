@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {% load static%}
+    <!-- <script src="{% static 'js/API_wrappers.js' %}">  </script> -->
+
+</head>
+<body>
+ <div>
+     <h1>
+    See Info for All Cards Here! 
+     </h1>
+     <font size="5" >
+      <table id="cardTable">
+        <tr>
+          <th>Word</th>
+          <th>Bin</th>
+          <th># Times Incorrect</th>
+        </tr>
+      </table>
+    </font>
+       
+</div>
+<script> 
+function getCards(){
+    $.ajax({
+        type:"GET",
+        url:"/app/api/getCards",
+        dataType:"json",
+        contentType: 'application/json',
+        success: function(data){
+          buildTable(data);
+        },
+        error:function(){
+            alert("Error Occured")
+        }
+    })
+
+}
+
+function buildTable(data){
+
+    for(var i=0; i<data.length; i++){
+      var row = data[i];
+      var rowTr$ = $('<tr/>');
+      // for (var key in row){
+      //   if(key in ["word", "wordBin", "incorrect"]){
+      rowTr$.append($('<th/>').html(row["word"]))
+      rowTr$.append($('<th/>').html(row["wordBin"]))
+      rowTr$.append($('<th/>').html(row["incorrect"]))
+      //}
+      $( "#cardTable" ).append(rowTr$);
+    }
+  }
+
+
+var csrftoken = getCookie('csrftoken');
+
+$.ajaxSetup({
+beforeSend: function(xhr, settings) {
+        // Send the token to same-origin, relative URLs only.
+        // Send the token only if the method warrants CSRF protection
+        // Using the CSRFToken value acquired earlier
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+    }
+});
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+getCards(); </script>
+</body>
+</html>
