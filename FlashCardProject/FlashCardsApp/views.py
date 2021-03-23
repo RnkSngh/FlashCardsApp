@@ -11,12 +11,15 @@ from django.contrib.auth.decorators import login_required
 from .Variables import bin_dict
 
 # Create your views here.
+@login_required
 def practice(request):
     return render(request, "FlashCardsApp/practice.html")
 
+@login_required
 def addCardView(request):
     return render(request, "FlashCardsApp/addCard.html")
 
+@login_required
 def getCardsView(request):
     return render(request, "FlashCardsApp/getCards.html")
 
