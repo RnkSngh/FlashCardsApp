@@ -35,9 +35,9 @@
         }),
         success: function(data){
         },
-        error:function(){
-            alert("Error Occured")
-        }
+        error: function(xhr, status, error) {
+            alert(xhr.responseText);
+            }
     })
 
 }

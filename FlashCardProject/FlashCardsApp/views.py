@@ -9,8 +9,8 @@ from rest_framework import status
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from .Variables import bin_dict
+from.forms import CardForm
 
-# Create your views here.
 @login_required
 def practice(request):
     return render(request, "FlashCardsApp/practice.html")
@@ -34,22 +34,27 @@ def get_all_cards(request):
 @api_view(['POST'])
 def add_card(request):
     if request.method == 'POST':
+        f = CardForm(request.data)
+        if not f.is_valid():
+            return Response(dict(f.errors.items()), status=status.HTTP_400_BAD_REQUEST)
         #send 400 error if word already exists
         if Card.objects.filter(owner=request.user).filter(word=request.data.get('word')):
-            raise ValidationError("Word Already Exists")
-        data = {
-            'word': request.data.get('word'), 
-            'definition': request.data.get('definition'), 
-            'wordBin':0,
-            'lastShowed':datetime.utcnow(),
-            'showAt':datetime.max-timedelta(hours=5),   #save as datetime.max when first initializing time                     
-            'owner': request.user.pk,
-            "incorrect":0}
-        serializer = CardSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
+            Response("Word already exists", status=status.HTTP_400_BAD_REQUEST)
+        try:
+            data = {
+                'word': request.data.get('word'), 
+                'definition': request.data.get('definition'), 
+                'wordBin':0,
+                'lastShowed':datetime.utcnow(),
+                'showAt':datetime.max-timedelta(hours=5),   #save as datetime.max when first initializing time                     
+                'owner': request.user.pk,
+                "incorrect":0}
+            serializer = CardSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def get_word(request):

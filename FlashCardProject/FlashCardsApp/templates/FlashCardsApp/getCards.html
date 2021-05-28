@@ -22,6 +22,7 @@
           <th>Word</th>
           <th>Bin</th>
           <th># Times Incorrect</th>
+          <th>Time Remaining</th>
         </tr>
       </table>
     </font>
@@ -49,11 +50,11 @@ function buildTable(data){
     for(var i=0; i<data.length; i++){
       var row = data[i];
       var rowTr$ = $('<tr/>');
-      // for (var key in row){
-      //   if(key in ["word", "wordBin", "incorrect"]){
+
       rowTr$.append($('<th/>').html(row["word"]))
       rowTr$.append($('<th/>').html(row["wordBin"]))
       rowTr$.append($('<th/>').html(row["incorrect"]))
+      rowTr$.append($('<th/>').html(row["timeRemaining"]))
       //}
       $( "#cardTable" ).append(rowTr$);
     }
