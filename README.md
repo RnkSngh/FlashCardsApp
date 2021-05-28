@@ -1,6 +1,8 @@
 # FlashCards
-A barebones flashcard app in Django that uses spaced repetition for vocabulary practice. Each word is put in one of 12 bins that represent increasing levels of mastery. 
-When first added, a word goes in bin 0. During practice, the word is shown, and you can turn over the word to see if you got the definition right or not (and mark the corresponding option of correct/incorrect). When marked correct, a card is moved to a higher bin. If marked incorrect, the word goes back to the 1st bin (bin 0 is only for cards not yet shown). The higher a word's bin is, the longer time it will be before the card is shown during practice. Words gotten incorrect more than 10 times will be put in bin 12, and will not be shown again. 
+A barebones flashcard app in Django that uses spaced repetition for vocabulary practice.
+
+Each word is put in one of 12 bins that represent increasing levels of mastery. 
+When first added, a word goes in bin 0. During practice, the word is shown, and you can turn over the word to see if you got the definition right or not (and mark the corresponding option of correct/incorrect). If marked correct, a card is moved to a higher bin. If marked incorrect, the word goes back to the 1st bin (bin 0 is only for cards not yet shown). The higher a word's bin is, the longer time it will be before the card is shown during practice. Words marked incorrect more than 10 times will be put in bin 12, and will not be shown again. 
 
 
 # Quickstart
